@@ -1,0 +1,8 @@
+;; -*- mode: emacs-lisp -*-
+(source "melpa" "http://melpa.milkbox.net/packages/")
+
+(package "swallow-window" "0.1" "Grow the current window into the space occupied by neighboring windows")
+
+(development
+ (depends-on "ecukes")
+ (depends-on "espuds"))
