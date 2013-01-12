@@ -75,3 +75,29 @@ Feature: swallow-window
       | C      | right | D         | bottom |
       | D      | up    | B         | right  |
       | D      | left  | C         | bottom |
+
+  Scenario Outline: 3 stack
+    Given the window layout:
+      """
+      +---+
+      | A |
+      +---+
+      | B |
+      +---+
+      | C |
+      +---+
+      """
+    When I select window <window>
+    And  I swallow-window <dir1>
+    Then window <swallowed1> should be deleted
+    And  window <swallowed2> should be the same size
+    When I swallow-window <dir2>
+    Then window <swallowed2> should be deleted
+    And  window <window> should be the only window in the frame
+
+    Examples:
+      | window | dir1 | swallowed1 | dir2 | swallowed2 |
+      | A      | down | B          | down | C          |
+      | B      | up   | A          | down | C          |
+      | B      | down | C          | up   | A          |
+      | C      | up   | B          | up   | A          |

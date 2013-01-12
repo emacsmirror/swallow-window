@@ -146,3 +146,18 @@ Returns an alist mapping window names to their windows."
   "Given a window layout (see `sw/read-layout'), actually
 create that in the current frame."
   (sw/mk-wins (sw/win-queue 'rows (cdr layout))))
+
+(defun sw/win-info (win)
+  "Return an alist of interesting information about WIN."
+  `((height . ,(window-height win))
+    (width  . ,(window-width  win))))
+
+(defun sw/cache-win-infos (wins)
+  "Given the output of `sw/mk-layout', stores position
+information about all of the windows therein."
+  (-map (lambda (elem)
+          (let* ((name (car elem))
+                 (win  (cdr elem))
+                 (info (sw/win-info win)))
+            (list name win info)))
+        wins))
