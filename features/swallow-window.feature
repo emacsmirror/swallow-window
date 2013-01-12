@@ -101,3 +101,43 @@ Feature: swallow-window
       | B      | up   | A          | down | C          |
       | B      | down | C          | up   | A          |
       | C      | up   | B          | up   | A          |
+
+  Scenario Outline: Consume two windows at once
+    Given the window layout:
+      """
+      +---+---+
+      | A | B |
+      +-------+
+      |   C   |
+      +-------+
+      | D | E |
+      +---+---+
+      """
+    When I select window <window>
+    And  I swallow-window <dir>
+    Then window <swallowed1> should be deleted
+    And  window <swallowed2> should be deleted
+
+    Examples:
+      | window | dir  | swallowed1 | swallowed2 |
+      | C      | up   | A          | B          |
+      | C      | down | D          | E          |
+
+  Scenario Outline: Downsizing a window
+    Given the window layout:
+      """
+      +---+---+
+      | A |   |
+      +---+ C |
+      | B |   |
+      +---+---+
+      """
+    When I select window <window>
+    And  I swallow-window <dir>
+    Then window <window> should be the full frame width
+    And  window <resized> should be <relation> window <window>
+
+    Examples:
+      | window | dir   | resized | relation |
+      | A      | right | C       | below    |
+      | B      | right | C       | above    |

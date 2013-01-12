@@ -57,6 +57,17 @@
           (should (= (window-height win) (cdr (assoc 'height props))))
           (should (= (window-width win) (cdr (assoc 'width props)))))))
 
+(Then "^window \\([A-Z]\\) should be the full frame width$"
+      (lambda (name)
+        (should (window-full-width-p (sw/window-named name)))))
+
+(Then "^window \\([A-Z]\\) should be \\(.+?\\) window \\([A-Z]\\)$"
+      (lambda (name-a relation name-b)
+        (let ((win-a (sw/window-named name-a))
+              (win-b (sw/window-named name-b)))
+          (should (window-live-p win-a))
+          (should (window-live-p win-b)))))
+
 ;; for sw/read-layout
 (When "^I read the window layout:$"
       (lambda (layout)
