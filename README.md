@@ -4,13 +4,13 @@ See `swallow-window.el` for now; it's too much effort to maintain the
 docs both here and in my elisp file. I'll get around to it.
 
 Alternatively, check the `features/swallow-window.feature`; that explains
-what works right now.
+the plans. Run the tests to see what actually works so far.
 
 Real Docs Coming Soon(tm).
 
 ## Testing
-This totally won't run on your machine yet. I need to get my fork
-of ecukes into the upstream, to add support for scenario outlines.
+Install [Carton](https://github.com/rejeep/carton); it makes life better.
+Then just run `make`.
 
 ## Credits
 1. [Josh Cheek](https://github.com/JoshCheek) for writing
