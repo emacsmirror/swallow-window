@@ -15,6 +15,22 @@ Feature: swallow-window
       | right |
 
 
+  Scenario Outline: Don't swallow the minibuffer
+    Given the window layout:
+      """
+      +---+---+
+      | A | B |
+      +---+---+
+      """
+    When I select window <window>
+    And  I swallow-window down
+    Then I should see message "swallow-window: can't swallow minibuffer"
+
+    Examples:
+      | window |
+      | A      |
+      | B      |
+
   Scenario Outline: Swallow the only other window to the side
     Given the window layout:
       """
@@ -76,7 +92,7 @@ Feature: swallow-window
       | D      | up    | B         | right  |
       | D      | left  | C         | bottom |
 
-  Scenario Outline: 3 stack
+  Scenario Outline: 3 tall
     Given the window layout:
       """
       +---+
@@ -101,6 +117,28 @@ Feature: swallow-window
       | B      | up   | A          | down | C          |
       | B      | down | C          | up   | A          |
       | C      | up   | B          | up   | A          |
+
+  Scenario Outline: 3 wide
+    Given the window layout:
+      """
+      +---+---+---+
+      | A | B | C |
+      +---+---+---+
+      """
+    When I select window <window>
+    And  I swallow-window <dir1>
+    Then window <swallowed1> should be deleted
+    And  window <swallowed2> should be the same size
+    When I swallow-window <dir2>
+    Then window <swallowed2> should be deleted
+    And  window <window> should be the only window in the frame
+
+    Examples:
+      | window | dir1  | swallowed1 | dir2  | swallowed2 |
+      | A      | right | B          | right | C          |
+      | B      | left  | A          | right | C          |
+      | B      | right | C          | left  | A          |
+      | C      | left  | B          | left  | A          |
 
   Scenario Outline: Consume two windows at once
     Given the window layout:
@@ -135,7 +173,7 @@ Feature: swallow-window
     When I select window <window>
     And  I swallow-window <dir>
     Then window <window> should be the full frame width
-    And  window <resized> should be <relation> window <window>
+    And  window <resized> should be shorter
 
     Examples:
       | window | dir   | resized | relation |

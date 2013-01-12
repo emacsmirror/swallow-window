@@ -11,6 +11,9 @@
 (defun sw/window-props (name)
   (nth 2 (assoc name sw/current-windows)))
 
+(defun sw/orig-prop (name prop)
+  (cdr (assoc prop (sw/window-props name))))
+
 (Given "^I delete all other windows$"
        (lambda () (delete-other-windows)))
 
@@ -54,19 +57,23 @@
       (lambda (name)
         (let ((win   (sw/window-named name))
               (props (sw/window-props name)))
-          (should (= (window-height win) (cdr (assoc 'height props))))
-          (should (= (window-width win) (cdr (assoc 'width props)))))))
+          (should (= (window-height win) (sw/orig-prop name 'height)))
+          (should (= (window-width win) (sw/orig-prop name 'width))))))
 
 (Then "^window \\([A-Z]\\) should be the full frame width$"
       (lambda (name)
         (should (window-full-width-p (sw/window-named name)))))
 
-(Then "^window \\([A-Z]\\) should be \\(.+?\\) window \\([A-Z]\\)$"
-      (lambda (name-a relation name-b)
-        (let ((win-a (sw/window-named name-a))
-              (win-b (sw/window-named name-b)))
-          (should (window-live-p win-a))
-          (should (window-live-p win-b)))))
+(Then "^window \\([A-Z]\\) should be \\(shorter\\|narrower\\)$"
+      (lambda (name measurement)
+        (let ((win   (sw/window-named name))
+              (props (sw/window-props name)))
+          (should (window-live-p win))
+          (cond
+           ((string= measurement "shorter")
+            (should (< (window-height win) (sw/orig-prop name 'height))))
+           ((string= measurement "narrower")
+            (should (< (window-width win) (sw/orig-prop name 'width))))))))
 
 ;; for sw/read-layout
 (When "^I read the window layout:$"

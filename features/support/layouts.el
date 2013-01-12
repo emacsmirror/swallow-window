@@ -149,8 +149,13 @@ create that in the current frame."
 
 (defun sw/win-info (win)
   "Return an alist of interesting information about WIN."
-  `((height . ,(window-height win))
-    (width  . ,(window-width  win))))
+  (let ((edges (window-edges win)))
+    `((height . ,(window-height win))
+      (width  . ,(window-width  win))
+      (left   . ,(nth 0 edges))
+      (top    . ,(nth 1 edges))
+      (right  . ,(nth 2 edges))
+      (bottom . ,(nth 3 edges)))))
 
 (defun sw/cache-win-infos (wins)
   "Given the output of `sw/mk-layout', stores position

@@ -89,11 +89,65 @@
 
 (require 'windmove)
 
+(defun swallow-window-info (window)
+  (let ((edges (window-edges window)))
+    `((height . ,(window-height window))
+      (width  . ,(window-width  window))
+      (left   . ,(nth 0 edges))
+      (top    . ,(nth 1 edges))
+      (right  . ,(nth 2 edges))
+      (bottom . ,(nth 3 edges)))))
+
+(defun swallow-window-grow-up (win top)
+  (let* ((props (swallow-window-info win))
+         (delta (- (cdr (assoc 'top props)) top)))
+    (enlarge-window delta)))
+
+(defun swallow-window-grow-left (win left)
+  (let* ((props (swallow-window-info win))
+         (delta (- (cdr (assoc 'left props)) left)))
+    (enlarge-window delta t)))
+
+(defun swallow-window-edges (target dir edge)
+  (delete-window target)
+  (when (not (one-window-p))
+    (cond
+     ((eq 'up dir) (swallow-window-grow-up (selected-window) edge))
+     ((eq 'left dir) (swallow-window-grow-left (selected-window) edge)))))
+
+;;;###autoload
 (defun swallow-window (dir)
-  (if (one-window-p)
-      (message "swallow-window: no other window to swallow")
-    (let ((win (windmove-find-other-window dir)))
-      (when win (delete-window win)))))
+  (interactive)
+  (let* ((target (windmove-find-other-window dir))
+         (props  (and target (swallow-window-info target))))
+    (cond
+     ((one-window-p) (message "swallow-window: no other window to swallow"))
+     ((window-minibuffer-p target) (message "swallow-window: can't swallow minibuffer"))
+     ((eq 'up dir) (swallow-window-edges target dir (cdr (assoc 'top props))))
+     ((eq 'down dir) (swallow-window-edges target dir (cdr (assoc 'bottom props))))
+     ((eq 'left dir) (swallow-window-edges target dir (cdr (assoc 'left props))))
+     ((eq 'right dir) (swallow-window-edges target dir (cdr (assoc 'right props))))
+     (t (error "No such direction: %s" dir)))))
+
+;;;###autoload
+(defun swallow-window-up ()
+  (interactive)
+  (swallow-window 'up))
+
+;;;###autoload
+(defun swallow-window-down ()
+  (interactive)
+  (swallow-window 'down))
+
+;;;###autoload
+(defun swallow-window-left ()
+  (interactive)
+  (swallow-window 'left))
+
+;;;###autoload
+(defun swallow-window-right ()
+  (interactive)
+  (swallow-window 'right))
 
 (provide 'swallow-window)
 ;;; swallow-window.el ends here
