@@ -179,3 +179,68 @@ Feature: swallow-window
       | window | dir   | resized | relation |
       | A      | right | C       | below    |
       | B      | right | C       | above    |
+
+  Scenario Outline: Downsizing consecutive windows
+    Given the window layout:
+      """
+      +---+---+---+---+
+      | A |   |   | E |
+      +---+ C | D +---+
+      | B |   |   | F |
+      +---+---+---+---+
+      """
+    When I select window <window>
+    And  I swallow-window <dir>
+    Then window <first> should be shorter
+    And  window <second> should be the same size
+    When I swallow-window <dir>
+    Then window <second> should be shorter
+    When I swallow-window <dir>
+    Then window <last> should be deleted
+    And  window <safe> should be the same size
+    And  window <window> should be the full frame width
+
+    Examples:
+      | window | dir   | first | second | last | safe |
+      | A      | right | C     | D      | E    | F    |
+      | B      | right | C     | D      | F    | E    |
+      | E      | left  | D     | C      | A    | B    |
+      | F      | left  | D     | C      | B    | A    |
+
+  Scenario Outline: Downsizing and swallowing
+    Given the window layout:
+      """
+      +---+---+---+
+      | A | B | C |
+      +---+---+---+
+      |     D     |
+      +-----------+
+      """
+    When I select window <window>
+    And  I swallow-window <dir1>
+    Then window <window> should be the full frame height
+    And  window D should be narrower
+    When I swallow-window <dir2>
+    Then window B should be deleted
+    And  window D should be the same width as window <survivor>
+
+    Examples:
+      | window | dir1 | dir2  | survivor |
+      | A      | down | right | C        |
+      | C      | down | left  | A        |
+
+  Scenario: We can't split a window in two
+    Given the window layout:
+      """
+      +---+---+---+
+      | A | B | C |
+      +---+---+---+
+      |     D     |
+      +-----------+
+      """
+    When I select window B
+    And  I swallow-window down
+    Then window D should be deleted
+    And  window A should be the full frame height
+    And  window B should be the full frame height
+    And  window C should be the full frame height

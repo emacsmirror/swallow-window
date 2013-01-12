@@ -60,9 +60,11 @@
           (should (= (window-height win) (sw/orig-prop name 'height)))
           (should (= (window-width win) (sw/orig-prop name 'width))))))
 
-(Then "^window \\([A-Z]\\) should be the full frame width$"
-      (lambda (name)
-        (should (window-full-width-p (sw/window-named name)))))
+(Then "^window \\([A-Z]\\) should be the full frame \\(height\\|width\\)$"
+      (lambda (name dim)
+        (if (string= dim "width")
+            (should (window-full-width-p (sw/window-named name)))
+          (should (window-full-height-p (sw/window-named name))))))
 
 (Then "^window \\([A-Z]\\) should be \\(shorter\\|narrower\\)$"
       (lambda (name measurement)
@@ -74,6 +76,14 @@
             (should (< (window-height win) (sw/orig-prop name 'height))))
            ((string= measurement "narrower")
             (should (< (window-width win) (sw/orig-prop name 'width))))))))
+
+(Then "^window \\([A-Z]\\) should be the same \\(width\\|height\\) as window \\([A-Z]\\)$"
+      (lambda (a dim b)
+        (let ((a (sw/window-named a))
+              (b (sw/window-named b)))
+          (if (string= dim "width")
+              (should (= (window-width a) (window-width b)))
+            (should (= (window-height a) (window-height b)))))))
 
 ;; for sw/read-layout
 (When "^I read the window layout:$"
