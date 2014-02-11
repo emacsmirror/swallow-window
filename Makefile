@@ -1,12 +1,14 @@
-CARTON ?= carton
-ECUKES = $(shell find elpa/ecukes-*/ecukes | tail -1)
+CASK ?= cask
 
 all: win
 
 win:
-	${CARTON} exec ${ECUKES} --dbg --verbose features
+	${CASK} exec ecukes --reporter spec --win features
 
-carton:
-	${CARTON} install
+nowin:
+	${CASK} exec ecukes --reporter spec --no-win features
 
-travis: carton win
+cask:
+	${CASK} install
+
+travis: cask win

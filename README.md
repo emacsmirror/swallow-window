@@ -9,8 +9,8 @@ the plans. Run the tests to see what actually works so far.
 Real Docs Coming Soon(tm).
 
 ## Testing
-Install [Carton](https://github.com/rejeep/carton); it makes life better.
-Then just run `make`.
+Install [Cask](https://github.com/cask/cask); it makes life better.
+Then just run `cask install && make`.
 
 ## Credits
 1. [Josh Cheek](https://github.com/JoshCheek) for writing

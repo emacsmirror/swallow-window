@@ -2,6 +2,8 @@
 ;; features. This is remarkably convoluted code; probably moreso than
 ;; the implementation will end up being.
 
+(require 'cl-lib)
+
 ;; Reading a layout
 (defun sw/lines (s)
   "Split into lines, retaining final newlines"
@@ -49,9 +51,10 @@ consist solely of edges."
 
 (defun sw/map-cons (fn seq)
   "Call FN with each sequential pairing of elements in SEQ."
-  (flet ((iter (rest) (when (> (length rest) 1)
-                        (funcall fn (car rest) (cadr rest)))))
-    (delete nil (maplist 'iter seq))))
+  (let ((iter (lambda (rest)
+                (when (> (length rest) 1)
+                  (funcall fn (car rest) (cadr rest))))))
+    (delete nil (cl-maplist iter seq))))
 
 (defun sw/split-cols (raw)
   "Collect all named windows or inner rows in RAW."
@@ -147,22 +150,12 @@ Returns an alist mapping window names to their windows."
 create that in the current frame."
   (sw/mk-wins (sw/win-queue 'rows (cdr layout))))
 
-(defun sw/win-info (win)
-  "Return an alist of interesting information about WIN."
-  (let ((edges (window-edges win)))
-    `((height . ,(window-height win))
-      (width  . ,(window-width  win))
-      (left   . ,(nth 0 edges))
-      (top    . ,(nth 1 edges))
-      (right  . ,(nth 2 edges))
-      (bottom . ,(nth 3 edges)))))
-
 (defun sw/cache-win-infos (wins)
   "Given the output of `sw/mk-layout', stores position
 information about all of the windows therein."
   (-map (lambda (elem)
           (let* ((name (car elem))
                  (win  (cdr elem))
-                 (info (sw/win-info win)))
+                 (info (swallow-window-info win)))
             (list name win info)))
         wins))

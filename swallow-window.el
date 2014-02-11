@@ -4,6 +4,7 @@
 ;; URL: https://github.com/pd/swallow-window.el
 ;; Version: 0.1
 ;; Keywords: convenience, frames
+;; Package-Requires: ((emacs "24.3"))
 
 ;;; Commentary:
 
