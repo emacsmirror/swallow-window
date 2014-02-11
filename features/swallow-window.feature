@@ -47,6 +47,27 @@ Feature: swallow-window
       | A      | right |
       | B      | left  |
 
+  Scenario Outline: No window there
+    Given the window layout:
+      """
+      +---+---+
+      | A |   |
+      +---+ C |
+      | B |   |
+      +---+---+
+      """
+    When I select window <window>
+    And  I swallow-window <dir>
+    Then I should see message "swallow-window: no window there"
+
+    Examples:
+      | window | dir   |
+      | C      | up    |
+      | C      | right |
+      | A      | up    |
+      | A      | left  |
+      | B      | left  |
+
 
   Scenario Outline: Swallow the only other window above or below
     Given the window layout:
@@ -65,7 +86,6 @@ Feature: swallow-window
       | window | dir  |
       | A      | down |
       | B      | up   |
-
 
   Scenario Outline: 2x2 windows
     Given the window layout:

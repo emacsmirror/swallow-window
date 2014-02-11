@@ -113,8 +113,11 @@
   (delete-window target)
   (when (not (one-window-p))
     (cond
-     ((eq 'up dir) (swallow-window-grow-up (selected-window) edge))
-     ((eq 'left dir) (swallow-window-grow-left (selected-window) edge)))))
+     ((eq 'up dir)
+      (swallow-window-grow-up (selected-window) edge))
+
+     ((eq 'left dir)
+      (swallow-window-grow-left (selected-window) edge)))))
 
 ;;;###autoload
 (defun swallow-window (dir)
@@ -122,12 +125,27 @@
   (let* ((target (windmove-find-other-window dir))
          (props  (and target (swallow-window-info target))))
     (cond
-     ((one-window-p) (message "swallow-window: no other window to swallow"))
-     ((window-minibuffer-p target) (message "swallow-window: can't swallow minibuffer"))
-     ((eq 'up dir) (swallow-window-edges target dir (cdr (assoc 'top props))))
-     ((eq 'down dir) (swallow-window-edges target dir (cdr (assoc 'bottom props))))
-     ((eq 'left dir) (swallow-window-edges target dir (cdr (assoc 'left props))))
-     ((eq 'right dir) (swallow-window-edges target dir (cdr (assoc 'right props))))
+     ((one-window-p)
+      (message "swallow-window: no other window to swallow"))
+
+     ((not target)
+      (message "swallow-window: no window there"))
+
+     ((window-minibuffer-p target)
+      (message "swallow-window: can't swallow minibuffer"))
+
+     ((eq 'up dir)
+      (swallow-window-edges target dir (cdr (assoc 'top props))))
+
+     ((eq 'down dir)
+      (swallow-window-edges target dir (cdr (assoc 'bottom props))))
+
+     ((eq 'left dir)
+      (swallow-window-edges target dir (cdr (assoc 'left props))))
+
+     ((eq 'right dir)
+      (swallow-window-edges target dir (cdr (assoc 'right props))))
+
      (t (error "No such direction: %s" dir)))))
 
 ;;;###autoload
